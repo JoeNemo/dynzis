@@ -64,6 +64,7 @@ public class ZISStubGenerator {
     int dispatchMode = DISPATCH_R12;
     while ((line = reader.readLine()) != null){
       if (line.startsWith("#define ZIS_STUB_")){
+        boolean isUndefinedStub = line.startsWith("#define ZIS_STUB_DYNZISUD");
         int spacePos = line.indexOf(' ',17);
         if (spacePos == -1){
           throw new IOException(String.format("bad define '%s'\n",line));
@@ -117,7 +118,7 @@ public class ZISStubGenerator {
           }
           out.printf("         LG   15,X'%02X'(,15)    %s\n",index*8,symbol);
           out.printf("         BR   15\n");
-        } else {
+        } else if (!isUndefinedStub){
           out.printf("    stubVector[ZIS_STUB_%-8.8s] = (void*)%s;\n",
                      symbol,functionName);
         }
